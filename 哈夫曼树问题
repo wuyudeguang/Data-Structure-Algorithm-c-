@@ -1,0 +1,37 @@
+/*题目描述：
+题目描述美军某部队要发送报文到指挥部,报文长度为m,报文中共含有n种字符(因报文有重复字符，故m>=n)，希望发送时对报文编码最短。
+若给定n种字符出现的次数，则采用哈夫曼编码，报文编码后最短为多少bit？
+输入：
+第一个数字表示字符种类,后续数字表示每个字符在报文中出现的次数.
+输出：
+哈夫曼树的带权路径长度*/
+#include<cstring>
+#include<string.h>
+#include <iostream>
+#include<algorithm>
+using namespace std;
+bool cmp(int a, int b) {
+    return a > b;
+}
+int main()
+{    
+    int num = 0;
+    const int N = 10000;
+    int a[N];
+    memset(a, -1, N);
+    int n;
+    cin >> n;
+    for (int i = 0; i < n; i++) { cin >> a[i]; }
+    int bi, sa, sum;
+    for (int i = 0; i < n - 1; i++) {
+        sort(a, a + n - i, cmp);
+        bi = a[n - 1 - i]; sa = a[n - 2 - i];
+        sum = bi + sa;
+        a[n - 2 - i] = sum;
+        a[n - i - 1] = -1;
+        num += sum;
+    }
+    cout << num;
+     
+ 
+}
