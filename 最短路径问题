@@ -1,0 +1,92 @@
+/*题目描述：
+给你n个点，m条无向边，每条边都有长度d和花费p，给你起点s终点t，要求输出起点到终点的最短距离及其花费，如果最短距离有多条路线，则输出花费最少的。
+输入：
+输入n,m，点的编号是1~n,然后是m行，每行4个数 a,b,d,p，表示a和b之间有一条边，且其长度为d，花费为p。最后一行是两个数 s,t;起点s，终点t。n和m为0时输入结束。
+(1<n<=1000, 0<m<100000, s != t)
+输出：
+输出 一行有两个数， 最短距离及其花费。*/
+#include <iostream>
+#include<algorithm>
+#include<cstring>
+using namespace std;
+const int N = 1000, M = 100000;
+struct VEdge {
+    int    weight;
+    int     money;
+};
+int FindMin(int D[],int E[], bool S[], int n)
+{
+    int k = 0, min = M,exp=M;
+    for (int i = 1; i <= n; i++)
+    {    
+        
+        if (!S[i] && min > D[i])
+        {
+            min = D[i];	k = i;
+            exp = E[i];
+        }
+        else if (!S[i] && min == D[i]) {
+            if (E[i] < exp) {
+                min = D[i];	k = i;
+                exp = E[i];
+            }
+        }
+    }
+    if (min == M) return -1;
+    return k;
+}
+
+
+int main() {
+    int n, m;
+    while (cin >> n && cin >> m ) {
+        VEdge  EdgeList[N + 1][N + 1];
+        for (int i = 1; i <= N; i++) {
+            for (int j = 1; j <= N; j++) {
+                if (i == j) {
+                    EdgeList[i][j].weight = 0; EdgeList[i][j].money = 0;
+                }
+                else {
+                    EdgeList[i][j].weight = M; EdgeList[i][j].money = M;
+                }
+            }
+        }
+        bool s[N + 1];
+        memset(s, false, N + 1);
+        int disk[N + 1], ex[N + 1];
+        if (!(m == 0 && n == 0)) {
+            int S, t;
+            for (int i = 0; i < m; i++) {
+                int a, b; cin >> a >> b;
+                cin >> EdgeList[a][b].weight >> EdgeList[a][b].money;
+                EdgeList[b][a].weight = EdgeList[a][b].weight;
+                EdgeList[b][a].money = EdgeList[a][b].money;
+            }
+            
+            cin >> S >> t;
+            for (int j = 1; j <= n; j++) {
+                disk[j] = EdgeList[S][j].weight;
+                ex[j] = EdgeList[S][j].money;
+            }
+            s[S] = true; disk[S] = 0; ex[S] = 0;
+            for (int i = 0; i < n; i++) {
+               int p = FindMin(disk, ex, s, n);
+                if (p== -1) {
+                    continue;
+                };
+                s[p] = true;
+                for (int j = 1; j <= n; j++) {
+                    if (!s[j] &&(disk[j] > EdgeList[p][j].weight + disk[p]))
+                    {
+                        disk[j] = EdgeList[p][j].weight + disk[p];
+                        ex[j] = EdgeList[p][j].money + ex[p];
+                    }
+                }
+            }
+
+            cout << disk[t] << " " << ex[t];
+            }
+        else { break; }
+        
+    }
+}
